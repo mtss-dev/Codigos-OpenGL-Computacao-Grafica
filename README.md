@@ -30,7 +30,7 @@ sudo apt-get install build-essential
 sudo apt-get install libglew1.5-dev libglm-dev
 ```
 
-## Compilação e execução
+## Compilação e execução dos programas
 
 Para compilar e executar os códigos, basta seguir os passos abaixo:
 
