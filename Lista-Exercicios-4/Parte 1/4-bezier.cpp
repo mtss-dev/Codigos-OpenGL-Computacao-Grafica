@@ -1,5 +1,5 @@
 #include <GL/glut.h>
-#include <cmath>
+#include <math.h>
 #include <iostream>
 
 float abc[4][3] = {{1.0, 0.0, 2.0}, {3.0, 0.0, 4.0}, {2.0, 0.0, 6.0}, {5.0, 0.0, 7.0}};
@@ -76,15 +76,20 @@ void handleKeypress(unsigned char key, int x, int y)
     glutPostRedisplay();
 }
 
-int main(int argc, char *argv[])
+void printInteraction()
 {
     std::cout << "Use x or X to move the x-axis, y or Y to y-axis, and z or Z to z-axis" << std::endl;
+}
+
+int main(int argc, char *argv[])
+{
+    printInteraction();
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(640, 480);
     glutInitWindowPosition(100, 150);
-    glutCreateWindow("Bezier Surface");
+    glutCreateWindow("Superficie Bezier");
     glutDisplayFunc(display);
     glutKeyboardFunc(handleKeypress);
     init();

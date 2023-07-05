@@ -1,48 +1,43 @@
-#include <cmath>
+#include <math.h>
 #include <iostream>
-
-#ifdef __APPLE__
-#  include <GLUT/glut.h>
-#else
-#  include <GL/glut.h>
-#endif
+#include <GL/glut.h>
 
 #define PI 3.14159265358979324
-#define R 10.0
-#define r 3.0
+#define MAJOR_RADIUS 10.0
+#define MINOR_RADIUS 3.0
 
 using namespace std;
 
-// Globals.
-static int p = 6; // Number of grid columns.
-static int q = 4; // Number of grid rows
-static float *vertices = NULL; // Vertex array of the mapped sample on the torus.
-static float Xangle = 150.0, Yangle = 0.0, Zangle = 0.0; // Angles to rotate the torus.
+// Globais.
+static int gridColumns = 6; // Número de colunas da grade.
+static int gridRows = 4; // Número de linhas da grade.
+static float *vertices = NULL; // Array de vértices do toro.
+static float Xangle = 150.0, Yangle = 0.0, Zangle = 0.0; // Ângulos para rotacionar o toro.
 
-// Fuctions to map the grid vertex (u_i,v_j) to the mesh vertex (f(u_i,v_j), g(u_i,v_j), h(u_i,v_j)) on the torus.
+// Funções para mapear o vértice da grade (u_i, v_j) para o vértice da malha (f(u_i,v_j), g(u_i,v_j), h(u_i,v_j)) no toro.
 float f(int i, int j)
 {
-   return ( ( R + r * cos( (-1 + 2*(float)j/q) * PI ) ) * cos( (-1 + 2*(float)i/p) * PI ) );
+   return ( ( MAJOR_RADIUS + MINOR_RADIUS * cos( (-1 + 2*(float)j/gridRows) * PI ) ) * cos( (-1 + 2*(float)i/gridColumns) * PI ) );
 }
 
 float g(int i, int j)
 {
-   return ( ( R + r * cos( (-1 + 2*(float)j/q) * PI ) ) * sin( (-1 + 2*(float)i/p) * PI ) ); 
+   return ( ( MAJOR_RADIUS + MINOR_RADIUS * cos( (-1 + 2*(float)j/gridRows) * PI ) ) * sin( (-1 + 2*(float)i/gridColumns) * PI ) );
 }
 
 float h(int i, int j)
 {
-   return ( r * sin( (-1 + 2*(float)j/q) * PI ) );
+   return ( MINOR_RADIUS * sin( (-1 + 2*(float)j/gridRows) * PI ) );
 }
 
-// Routine to fill the vertex array with co-ordinates of the mapped sample points.
+// Função para preencher o array de vértices com as coordenadas dos pontos mapeados.
 void fillVertexArray(void)
 {
    int i, j, k;
 
    k = 0;
-   for (j = 0; j <= q; j++)
-      for (i = 0; i <= p; i++)
+   for (j = 0; j <= gridRows; j++)
+      for (i = 0; i <= gridColumns; i++)
       {
          vertices[k++] = f(i,j);
          vertices[k++] = g(i,j);
@@ -50,19 +45,19 @@ void fillVertexArray(void)
       }
 }
 
-// Initialization routine.
+// Função de inicialização.
 void setup(void)
 {
    glEnableClientState(GL_VERTEX_ARRAY);
 
-   glClearColor(1.0, 1.0, 1.0, 0.0); 
+   glClearColor(1.0, 1.0, 1.0, 0.0);
 }
 
-// Drawing routine.
+// Função de desenho.
 void drawScene(void)
 {
    int  i, j;
-   vertices = new float[3*(p+1)*(q+1)]; // Dynamic array allocation with new value of p and q. 
+   vertices = new float[3*(gridColumns+1)*(gridRows+1)]; // Alocação dinâmica do array com o novo valor de gridColumns e gridRows.
 
    glVertexPointer(3, GL_FLOAT, 0, vertices);
    glClear(GL_COLOR_BUFFER_BIT);
@@ -74,22 +69,22 @@ void drawScene(void)
 
    glColor3f(0.0, 0.0, 0.0);
 
-   // Rotate scene.
+   // Rotacionar a cena.
    glRotatef(Zangle, 0.0, 0.0, 1.0);
    glRotatef(Yangle, 0.0, 1.0, 0.0);
    glRotatef(Xangle, 1.0, 0.0, 0.0);
 
-   // Fill the vertex array.
+   // Preencher o array de vértices.
    fillVertexArray();
 
-   // Make the approximating triangular mesh.
-   for(j = 0; j < q; j++)
+   // Criar a malha triangular aproximada.
+   for(j = 0; j < gridRows; j++)
    {
       glBegin(GL_TRIANGLE_STRIP);
-      for(i = 0; i <= p; i++)
+      for(i = 0; i <= gridColumns; i++)
       {
-         glArrayElement( (j+1)*(p+1) + i );
-         glArrayElement( j*(p+1) + i );
+         glArrayElement( (j+1)*(gridColumns+1) + i );
+         glArrayElement( j*(gridColumns+1) + i );
 	  }
       glEnd();
    }
@@ -97,7 +92,7 @@ void drawScene(void)
    glutSwapBuffers();
 }
 
-// OpenGL window reshape routine.
+// Função de redimensionamento da janela OpenGL.
 void resize(int w, int h)
 {
    glViewport(0, 0, (GLsizei)w, (GLsizei)h);
@@ -108,7 +103,7 @@ void resize(int w, int h)
 
 }
 
-// Keyboard input processing routine.
+// Função de entrada do teclado.
 void keyInput(unsigned char key, int x, int y)
 {
    switch(key) 
@@ -151,18 +146,18 @@ void keyInput(unsigned char key, int x, int y)
    }
 }
 
-// Callback routine for non-ASCII key entry.
+// Função de entrada de tecla especial.
 void specialKeyInput(int key, int x, int y)
 {
-   if (key == GLUT_KEY_LEFT) if (p > 3) p -= 1;
-   if (key == GLUT_KEY_RIGHT) p += 1;
-   if (key == GLUT_KEY_DOWN) if (q > 3) q -= 1;
-   if (key == GLUT_KEY_UP) q += 1;
+   if (key == GLUT_KEY_LEFT) if (gridColumns > 3) gridColumns -= 1;
+   if (key == GLUT_KEY_RIGHT) gridColumns += 1;
+   if (key == GLUT_KEY_DOWN) if (gridRows > 3) gridRows -= 1;
+   if (key == GLUT_KEY_UP) gridRows += 1;
 
    glutPostRedisplay();
 }
 
-// Routine to output interaction instructions to the C++ window.
+// Função para exibir as instruções de interação na janela do programa.
 void printInteraction(void)
 {
    cout << "Interaction:" << endl;
@@ -171,7 +166,7 @@ void printInteraction(void)
         << "Press x, X, y, Y, z, Z to turn the torus." << endl;
 }
 
-// Main routine.
+// Função principal.
 int main(int argc, char **argv) 
 {
    printInteraction();
@@ -179,7 +174,7 @@ int main(int argc, char **argv)
    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
    glutInitWindowSize(500, 500);
    glutInitWindowPosition(100, 100);
-   glutCreateWindow("torus.cpp");
+   glutCreateWindow("Torus");
    setup();
    glutDisplayFunc(drawScene);
    glutReshapeFunc(resize);
