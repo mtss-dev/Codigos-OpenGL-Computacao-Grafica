@@ -1,6 +1,8 @@
 # Codigos-OpenGL-Computacao-Grafica
 
-Códigos utilizando OpenGL realizados na disciplina de Computação Gráfica (lista de exercícios 3 e 4).
+Códigos utilizando OpenGL realizados na disciplina de Computação Gráfica.
+
+Contém os códigos solicitados na lista de exercícios 3 e 4 (trabalho final).
 
 ## Como executar
 
